@@ -111,7 +111,9 @@ def model_run(qs):
         "errors": int(df.error.notna().sum()),
         "prompt_tokens_total": int(pd.to_numeric(df.prompt_tokens, errors="coerce").fillna(0).sum()),
         "completion_tokens_total": int(pd.to_numeric(df.completion_tokens, errors="coerce").fillna(0).sum()),
-        "finish_reason_length": int((df.finish_reason == "length").sum()),
+        # Cloudflare reports finish_reason "stop" even when it cuts at max_tokens
+        # (seen 12 Oct: 1024 tokens, "stop"), so count hits on the cap instead.
+        "hit_max_tokens": int((pd.to_numeric(df.completion_tokens, errors="coerce") >= config.MAX_TOKENS).sum()),
     }
     pd.Series(summary).to_csv(ROOT / "results" / "parity_summary.csv", header=["value"])
     for k, v in summary.items():

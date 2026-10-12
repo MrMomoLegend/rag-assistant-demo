@@ -24,7 +24,10 @@ print(f"             {a['answer'][:200]!r}")
 long_q = "Explain how the transformer architecture works in detail."
 c = pipeline.answer_question(long_q, use_rag=False)
 tok, fin = c["completion_tokens"], c["finish_reason"]
-max_ok = (tok or 0) > 256 and fin == "stop"
+# max_tokens passes through if we get more than Workers AI's default 256.
+# Note: Cloudflare says "stop" even when it truncates at the cap, so a result
+# of exactly 1024 means the answer was cut, not that it ended naturally.
+max_ok = (tok or 0) > 256
 print(f"[max_tokens] completion_tokens={tok}, finish_reason={fin}: {'OK' if max_ok else 'CHECK'}")
 print(f"             prompt_tokens (grounded GPT-4 question) = {a['prompt_tokens']}")
 
