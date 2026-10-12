@@ -1,0 +1,4 @@
+-r requirements.txt
+pytest
+pypdf==6.16.1
+pandas

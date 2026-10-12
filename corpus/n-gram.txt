@@ -1,0 +1,164 @@
+n-gram
+An n-gram is a sequence of n adjacent symbols in a particular order.[1] The symbols may be n
+adjacent letters (including punctuation marks and blanks), syllables, or rarely whole words found
+in a language dataset; or adjacent phonemes extracted from a speech-recording dataset, or
+adjacent base pairs extracted from a genome. They are collected from a text corpus or speech
+corpus.
+If Latin numerical prefixes are used, then n-gram of size 1 is called a "unigram", size 2 a "bigram"
+(or, less commonly, a "digram") etc. If, instead of the Latin ones, the English cardinal numbers are
+furtherly used, then they are called "four-gram", "five-gram", etc. Similarly, Greek numerical
+prefixes such as "monomer", "dimer", "trimer", "tetramer", "pentamer", etc., or English cardinal
+numbers, "one-mer", "two-mer", "three-mer", etc. are used in computational biology for polymers
+or oligomers of a known size, called k-mers. When the items are words, n-grams may also be called
+shingles.[2]
+In the context of natural language processing (NLP), the use of n-grams allows bag-of-words
+models to capture information such as word order, which would not be possible in the traditional
+bag of words setting.
+In 1951, Shannon[3] discussed n-gram models of English. For example:
+3-gram character model (random draw based on the probabilities of each trigram): in no ist lat
+whey cratict froure birs grocid pondenome of demonstures of the retagin is regiactiona of cre
+2-gram word model (random draw of words taking into account their transition probabilities):
+the head and in frontal attack on an english writer that the character of this point is therefore
+another method for the letters that the time of who ever told the problem for an unexpected
+Examples
+
+Figure 1. n-gram examples from various disciplines
+Field Unit Sample sequence 1-gram
+sequence
+2-gram
+sequence 3-gram sequence
+Vernacular
+name unigram bigram trigram
+Order of
+resulting
+Markov
+model
+0 1 2
+Protein
+sequencing
+amino
+acid
+... Cys-Gly-Leu-Ser-Trp
+...
+..., Cys, Gly,
+Leu, Ser, Trp,
+...
+..., Cys-Gly, Gly-
+Leu, Leu-Ser,
+Ser-Trp, ...
+..., Cys-Gly-Leu,
+Gly-Leu-Ser, Leu-
+Ser-Trp, ...
+DNA
+sequencing base pair ...AGCTTCGA... ..., A, G, C, T,
+T, C, G, A, ...
+..., AG, GC, CT,
+TT, TC, CG, GA,
+...
+..., AGC, GCT,
+CTT, TTC, TCG,
+CGA, ...
+Character n-
+gram
+language
+model
+character ...to_be_or_not_to_be...
+..., t, o, _, b, e,
+_, o, r, _, n, o,
+t, _, t, o, _, b,
+e, ...
+..., to, o_, _b,
+be, e_, _o, or,
+r_, _n, no, ot, t_,
+_t, to, o_, _b,
+be, ...
+..., to_, o_b, _be,
+be_, e_o, _or, or_,
+r_n, _no, not, ot_,
+t_t, _to, to_, o_b,
+_be, ...
+Word n-gram
+language
+model
+word ... to be or not to be ... ..., to, be, or,
+not, to, be, ...
+..., to be, be or,
+or not, not to, to
+be, ...
+..., to be or, be or
+not, or not to, not
+to be, ...
+Figure 1 shows several example sequences and the corresponding 1-gram, 2-gram and 3-gram
+sequences.
+Here are further examples; these are word-level 3-grams and 4-grams (and counts of the number
+of times they appeared) from the Google n-gram corpus.[4]
+3-grams
+ceramics collectables collectibles (55)
+ceramics collectables fine (130)
+ceramics collected by (52)
+ceramics collectible pottery (50)
+ceramics collectibles cooking (45)
+4-grams
+serve as the incoming (92)
+serve as the incubator (99)
+serve as the independent (794)
+serve as the index (223)
+serve as the indication (72)
+serve as the indicator (120)
+Google Books Ngram Viewer
+See also
+
+1. Deller, John R.; Hansen, John (2005). "Methods, Models, and Algorithms for Modern Speech
+Processing". The Electrical Engineering Handbook. pp. 861–890. doi:10.1016/B978-
+012170960-0/50063-3 (https://doi.org/10.1016%2FB978-012170960-0%2F50063-3).
+ISBN 978-0-12-170960-0.
+2. Broder, Andrei Z.; Glassman, Steven C.; Manasse, Mark S.; Zweig, Geoffrey (1997). "Syntactic
+clustering of the web". Computer Networks and ISDN Systems. 29 (8): 1157–1166.
+doi:10.1016/s0169-7552(97)00031-7 (https://doi.org/10.1016%2Fs0169-7552%2897%2900031
+-7).
+3. Shannon, Claude E. "The redundancy of English." Cybernetics; Transactions of the 7th
+Conference, New York: Josiah Macy, Jr. Foundation. 1951.
+4. Franz, Alex; Brants, Thorsten (2006). "All Our N-gram are Belong to You" (https://googleresear
+ch.blogspot.com/2006/08/all-our-n-gram-are-belong-to-you.html). Google Research Blog.
+Archived (https://web.archive.org/web/20061017225954/http://googleresearch.blogspot.com/20
+06/08/all-our-n-gram-are-belong-to-you.html) from the original on 17 October 2006. Retrieved
+16 December 2011.
+Manning, Christopher D.; Schütze, Hinrich (1999). Foundations of statistical natural language
+processing. Cambridge, Mass: MIT Press. ISBN 978-0-262-13360-9.
+White, Owen; Dunning, Ted; Sutton, Granger; Adams, Mark; Venter, J. Craig; Fields, Chris
+(1993). "A quality control algorithm for dna sequencing projects" (https://www.ncbi.nlm.nih.gov/
+pmc/articles/PMC309901). Nucleic Acids Research. 21 (16): 3829–3838.
+doi:10.1093/nar/21.16.3829 (https://doi.org/10.1093%2Fnar%2F21.16.3829). PMC 309901 (htt
+ps://www.ncbi.nlm.nih.gov/pmc/articles/PMC309901). PMID 8367301 (https://pubmed.ncbi.nlm.
+nih.gov/8367301).
+Damerau, Frederick J. (1971). Markov Models and Linguistic Theory. The Hague: Mouton.
+OCLC 200370 (https://search.worldcat.org/oclc/200370).
+Figueroa, Alejandro; Atkinson, John (2012). "Contextual Language Models For Ranking
+Answers To Natural Language Definition Questions". Computational Intelligence. 28 (4): 528–
+548. doi:10.1111/j.1467-8640.2012.00426.x (https://doi.org/10.1111%2Fj.1467-8640.2012.0042
+6.x).
+Brocardo, Marcelo Luiz; Traore, Issa; Saad, Sherif; Woungang, Isaac (2013). "Authorship
+verification for short messages using stylometry". 2013 International Conference on Computer,
+Information and Telecommunication Systems (CITS). pp. 1–6. doi:10.1109/CITS.2013.6705711
+(https://doi.org/10.1109%2FCITS.2013.6705711). ISBN 978-1-4799-0168-5.
+Ngram Extractor: Gives weight of n-gram based on their frequency. (https://www.ngramextracto
+r.com)
+Google's Google Books n-gram viewer (https://books.google.com/ngrams) and Web n-grams
+database (https://googleresearch.blogspot.com/2006/08/all-our-n-gram-are-belong-to-you.html)
+(September 2006)
+STATOPERATOR N-grams Project Weighted n-gram viewer for every domain in Alexa Top 1M
+(http://data.statoperator.com/)
+1,000,000 most frequent 2,3,4,5-grams (http://www.ngrams.info/) from the 425 million word
+Corpus of Contemporary American English
+References
+Further reading
+External links
+
+Peachnote's music ngram viewer (http://www.peachnote.com/)
+Stochastic Language Models (n-Gram) Specification (http://www.w3.org/TR/ngram-spec/)
+(W3C)
+Michael Collins's notes on n-Gram Language Models (http://www.cs.columbia.edu/~mcollins/co
+urses/nlp2011/notes/lm.pdf)
+OpenRefine: Clustering In Depth (https://github.com/OpenRefine/OpenRefine/wiki/Clustering-In
+-Depth/)
+Retrieved from "https://en.wikipedia.org/w/index.php?title=N-gram&oldid=1346825061"

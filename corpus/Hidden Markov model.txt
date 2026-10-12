@@ -1,0 +1,715 @@
+Hidden Markov model
+In probability theory, a hidden Markov model (HMM) is a Markov model in which the
+observations are dependent on a latent (or hidden) Markov process (referred to as ). An HMM
+requires that there be an observable process  whose outcomes depend on the outcomes of  in a
+known way. Since  cannot be observed directly, the goal is to learn about state of  by observing
+. By definition of being a Markov model, an HMM has an additional requirement that the
+outcome of  at time  must be "influenced" exclusively by the outcome of  at  and
+that the outcomes of  and  at  must be conditionally independent of  at  given 
+at time . Estimation of the parameters in an HMM can be performed using maximum
+likelihood estimation. For linear chain HMMs, the Baum–Welch algorithm can be used to estimate
+parameters.
+Hidden Markov models are known for their applications to thermodynamics, statistical mechanics,
+physics, chemistry, economics, finance, signal processing, information theory, pattern recognition
+—such as speech recognition,[1] handwriting recognition, gesture recognition,[2] part-of-speech
+tagging, musical score following,[3] partial discharges[4] and bioinformatics.[5][6]
+Let  and  be discrete-time stochastic processes and . The pair  is a hidden
+Markov model if
+ is a Markov process whose behavior is not directly observable ("hidden");
+,
+for every , , and every Borel set .
+Let  and  be continuous-time stochastic processes. The pair  is a hidden Markov
+model if
+ is a Markov process whose behavior is not directly observable ("hidden");
+,
+for every , every Borel set , and every family of Borel sets .
+The states of the process  (resp.  are called hidden states, and 
+(resp.  is called emission probability or output probability.
+Definition
+Terminology
+
+Figure 1. Probabilistic parameters of a hidden
+Markov model (example)
+X — states
+y — possible observations
+a — state transition probabilities
+b — output probabilities
+In its discrete form, a hidden Markov process can
+be visualized as a generalization of the urn problem
+with replacement (where each item from the urn is
+returned to the original urn before the next step).[7]
+In a room that is not visible to an observer there is a
+genie. The room contains urns X1, X2, X3, ... each of
+which contains a known mix of balls, with each ball
+having a unique label y1, y2, y3, ... . The genie
+chooses an urn in that room and randomly draws a
+ball from that urn. It then puts the ball onto a
+conveyor belt, where the observer can observe the
+sequence of the balls but not the sequence of urns
+from which they were drawn.
+The genie has some procedure to choose urns:
+The choice of the urn for the n-th ball depends
+only upon a random number and the choice of the urn for the (n − 1)-th ball.
+The choice of urn does not directly depend on the urns chosen before this single previous urn.
+Therefore, this is called a Markov process. It can be described by the upper part of Figure 1.
+The Markov process cannot be observed, only the sequence of labeled balls, thus this arrangement
+is called a hidden Markov process. This is illustrated by the lower part of the diagram shown in
+Figure 1, where one can see that balls y1, y2, y3, y4 can be drawn at each state. Even if the observer
+knows the composition of the urns and has just observed a sequence of three balls, e.g. y1, y2 and
+y3 on the conveyor belt, the observer still cannot be sure which urn (i.e., at which state) the genie
+has drawn the third ball from. However, the observer can work out other information, such as the
+likelihood that the third ball came from each of the urns.
+Consider two friends, Alice and Bob, who live far apart from each other and who talk together daily
+over the telephone about what they did that day. Bob is only interested in three activities: walking
+in the park, shopping, and cleaning his apartment. The choice of what to do is determined
+exclusively by the weather on a given day. Alice has no definite information about the weather, but
+she knows general trends. Based on what Bob tells her he did each day, Alice tries to guess what
+the weather must have been like.
+Examples
+Drawing balls from hidden urns
+Consider this example
+Markov process
+Weather guessing game
+
+Alice believes that the weather operates as a discrete Markov chain. There are two states, "Rainy"
+and "Sunny", but she cannot observe them directly, that is, they are hidden from her. On each day,
+there is a certain chance that Bob will perform one of the following activities, depending on the
+weather: "walk", "shop", or "clean". Since Bob tells Alice about his activities, those are the
+observations. The entire system is that of a hidden Markov model (HMM).
+Alice knows the general weather trends in the area, and what Bob likes to do on average. In other
+words, the parameters of the HMM are known. They can be represented as follows in Python:
+In this piece of code, start_probability represents Alice's belief about which state the HMM is
+in when Bob first calls her (all she knows is that it tends to be rainy on average). The particular
+probability distribution used here is not the equilibrium one, which is (given the transition
+probabilities) approximately {'Rainy': 0.57, 'Sunny': 0.43}. The
+transition_probability represents the change of the weather in the underlying Markov chain.
+In this example, there is only a 30% chance that tomorrow will be sunny if today is rainy. The
+emission_probability represents how likely Bob is to perform a certain activity on each day. If it
+is rainy, there is a 50% chance that he is cleaning his apartment; if it is sunny, there is a 60%
+chance that he is outside for a walk.
+A similar example is further elaborated in the Viterbi algorithm page.
+states = ("Rainy", "Sunny")
+observations = ("walk", "shop", "clean")
+start_probability = {"Rainy": 0.6, "Sunny": 0.4}
+transition_probability = {
+    "Rainy": {"Rainy": 0.7, "Sunny": 0.3},
+    "Sunny": {"Rainy": 0.4, "Sunny": 0.6},
+}
+emission_probability = {
+    "Rainy": {"walk": 0.1, "shop": 0.4, "clean": 0.5},
+    "Sunny": {"walk": 0.6, "shop": 0.3, "clean": 0.1},
+}
+
+The diagram below shows the general architecture of an instantiated HMM. Each oval shape
+represents a random variable that can adopt any of a number of values. The random variable x(t) is
+the hidden state at time t (with the model from the above diagram, x(t) ∈  {x1, x2, x3}). The
+random variable y(t) is the observation at time t (with y(t) ∈  {y1, y2, y3, y4}). The arrows in the
+diagram (often called a trellis diagram) denote conditional dependencies.
+From the diagram, it is clear that the conditional probability distribution of the hidden variable
+x(t) at time t, given the values of the hidden variable x at all times, depends only on the value of the
+hidden variable x(t − 1); the values at time t − 2 and before have no influence. This is called the
+Markov property. Similarly, the value of the observed variable y(t) depends on only the value of the
+hidden variable x(t) (both at time t).
+In the standard type of hidden Markov model considered here, the state space of the hidden
+variables is discrete, while the observations themselves can either be discrete (typically generated
+from a categorical distribution) or continuous (typically from a Gaussian distribution). The
+parameters of a hidden Markov model are of two types, transition probabilities and emission
+probabilities (also known as output probabilities). The transition probabilities control the way the
+hidden state at time t is chosen given the hidden state at time t − 1.
+The hidden state space is assumed to consist of one of N possible values, modelled as a categorical
+distribution. (See the section below on extensions for other possibilities.) This means that for each
+of the N possible states that a hidden variable at time t can be in, there is a transition probability
+from this state to each of the N possible states of the hidden variable at time t + 1, for a total of 
+transition probabilities. The set of transition probabilities for transitions from any given state must
+sum to 1. Thus, the N × N matrix of transition probabilities is a Markov matrix. Because any
+transition probability can be determined once the others are known, there are a total of N(N − 1)
+transition parameters.
+In addition, for each of the N possible states, there is a set of emission probabilities governing the
+distribution of the observed variable at a particular time given the state of the hidden variable at
+that time. The size of this set depends on the nature of the observed variable. For example, if the
+observed variable is discrete with M possible values, governed by a categorical distribution, there
+will be M − 1 separate parameters, for a total of N(M − 1) emission parameters over all hidden
+states. On the other hand, if the observed variable is an M-dimensional vector distributed
+according to an arbitrary multivariate Gaussian distribution, there will be M parameters
+controlling the means and  parameters controlling the covariance matrix, for a total
+of  emission parameters. (In such a case,
+unless the value of M is small, it may be more practical to restrict the nature of the covariances
+between individual elements of the observation vector, e.g. by assuming that the elements are
+independent of each other, or less restrictively, are independent of all but a fixed number of
+adjacent elements.)
+Structural architecture
+
+The state transition and output probabilities of an HMM are
+indicated by the line opacity in the upper part of the diagram. Given
+that the output sequence is observed in the lower part of the
+diagram, interest occurs in the most likely sequence of states that
+could have produced it. Based on the arrows that are present in
+the diagram, the following state sequences are candidates:
+5 3 2 5 3 2
+4 3 2 5 3 2
+3 1 2 5 3 2
+The most likely sequence can be found by evaluating the joint
+probability of both the state sequence and the observations for
+each case (simply by multiplying the probability values, which here
+correspond to the opacities of the arrows involved). In general, this
+type of problem (i.e., finding the most likely explanation for an
+observation sequence) can be solved efficiently using the Viterbi
+algorithm.
+Several inference problems are
+associated with hidden Markov
+models, as outlined below.
+The task is to compute in a best way,
+given the parameters of the model,
+the probability of a particular output
+sequence. This requires summation
+over all possible state sequences:
+The probability of observing a
+sequence
+of length L is given by
+where the sum runs over all possible
+hidden-node sequences
+Applying the principle of dynamic
+programming, this problem, too, can
+be handled efficiently using the
+forward algorithm.
+A number of related tasks ask about
+the probability of one or more of the latent variables, given the model's parameters and a sequence
+of observations .
+Inference
+Probability of an observed
+sequence
+Probability of the latent
+variables
+
+The task is to compute, given the model's parameters and a sequence of observations, the
+distribution over hidden states of the last latent variable at the end of the sequence, i.e. to compute
+. This task is used when the sequence of latent variables is thought of as
+the underlying states that a process moves through at a sequence of points in time, with
+corresponding observations at each point. Then, it is natural to ask about the state of the process at
+the end.
+This problem can be handled efficiently using the forward algorithm. An example is when the
+algorithm is applied to a Hidden Markov Network to determine .
+This is similar to filtering but asks about the distribution of a latent variable somewhere in the
+middle of a sequence, i.e. to compute  for some . From the
+perspective described above, this can be thought of as the probability distribution over hidden
+states for a point in time k in the past, relative to time t.
+The forward-backward algorithm is a good method for computing the smoothed values for all
+hidden state variables.
+The task, unlike the previous two, asks about the joint probability of the entire sequence of hidden
+states that generated a particular sequence of observations (see illustration on the right). This task
+is generally applicable when HMM's are applied to different sorts of problems from those for which
+the tasks of filtering and smoothing are applicable. An example is part-of-speech tagging, where
+the hidden states represent the underlying parts of speech corresponding to an observed sequence
+of words. In this case, what is of interest is the entire sequence of parts of speech, rather than
+simply the part of speech for a single word, as filtering or smoothing would compute.
+This task requires finding a maximum over all possible state sequences, and can be solved
+efficiently by the Viterbi algorithm.
+For some of the above problems, it may also be interesting to ask about statistical significance.
+What is the probability that a sequence drawn from some null distribution will have an HMM
+probability (in the case of the forward algorithm) or a maximum state sequence probability (in the
+case of the Viterbi algorithm) at least as large as that of a particular output sequence?[8] When an
+HMM is used to evaluate the relevance of a hypothesis for a particular output sequence, the
+statistical significance indicates the false positive rate associated with failing to reject the
+hypothesis for the output sequence.
+The parameter learning task in HMMs is to find, given an output sequence or a set of such
+sequences, the best set of state transition and emission probabilities. The task is usually to derive
+the maximum likelihood estimate of the parameters of the HMM given the set of output sequences.
+Filtering
+Smoothing
+Most likely explanation
+Statistical significance
+Learning
+
+A profile HMM modelling a multiple
+sequence alignment of proteins in Pfam
+No tractable algorithm is known for solving this problem exactly, but a local maximum likelihood
+can be derived efficiently using the Baum–Welch algorithm or the Baldi–Chauvin algorithm. The
+Baum–Welch algorithm is a special case of the expectation-maximization algorithm.
+If the HMMs are used for time series prediction, more sophisticated Bayesian inference methods,
+like Markov chain Monte Carlo (MCMC) sampling are proven to be favorable over finding a single
+maximum likelihood model both in terms of accuracy and stability.[9] Since MCMC imposes
+significant computational burden, in cases where computational scalability is also of interest, one
+may alternatively resort to variational approximations to Bayesian inference, e.g.[10] Indeed,
+approximate variational inference offers computational efficiency comparable to expectation-
+maximization, while yielding an accuracy profile only slightly inferior to exact MCMC-type
+Bayesian inference.
+HMMs can be applied in many fields where the goal is to
+recover a data sequence that is not immediately observable
+(but other data that depend on the sequence are).
+Applications include:
+Computational finance[11][12]
+Single-molecule kinetic analysis[13]
+Neuroscience[14][15]
+Cryptanalysis
+Speech recognition, including Siri[16]
+Speech synthesis
+Part-of-speech tagging
+Document separation in scanning solutions
+Machine translation
+Partial discharge
+Gene prediction
+Handwriting recognition[17]
+Alignment of bio-sequences
+Time series analysis
+Activity recognition
+Protein folding[18]
+Sequence classification[19]
+Metamorphic virus detection[20]
+Sequence motif discovery (DNA and proteins)[21]
+DNA hybridization kinetics[22][23]
+Chromatin state discovery[24]
+Transportation forecasting[25]
+Solar irradiance variability[26][27][28]
+Applications
+
+Hidden Markov models were described in a series of statistical papers by Leonard E. Baum and
+other authors in the second half of the 1960s.[29][30][31][32][33] One of the first applications of
+HMMs was speech recognition, starting in the mid-1970s.[34][35][36][37] From the linguistics point
+of view, hidden Markov models are equivalent to stochastic regular grammar.[38]
+In the second half of the 1980s, HMMs began to be applied to the analysis of biological
+sequences,[39] in particular DNA. Since then, they have become ubiquitous in the field of
+bioinformatics.[40]
+In the hidden Markov models considered above, the state space of the hidden variables is discrete,
+while the observations themselves can either be discrete (typically generated from a categorical
+distribution) or continuous (typically from a Gaussian distribution). Hidden Markov models can
+also be generalized to allow continuous state spaces. Examples of such models are those where the
+Markov process over hidden variables is a linear dynamical system, with a linear relationship
+among related variables and where all hidden and observed variables follow a Gaussian
+distribution. In simple cases, such as the linear dynamical system just mentioned, exact inference
+is tractable (in this case, using the Kalman filter); however, in general, exact inference in HMMs
+with continuous latent variables is infeasible, and approximate methods must be used, such as the
+extended Kalman filter or the particle filter.
+Nowadays, inference in hidden Markov models is performed in nonparametric settings, where the
+dependency structure enables identifiability of the model[41] and the learnability limits are still
+under exploration.[42]
+Hidden Markov models are generative models, in which the joint distribution of observations and
+hidden states, or equivalently both the prior distribution of hidden states (the transition
+probabilities) and conditional distribution of observations given states (the emission
+probabilities), is modeled. The above algorithms implicitly assume a uniform prior distribution
+over the transition probabilities. However, it is also possible to create hidden Markov models with
+other types of prior distributions. An obvious candidate, given the categorical distribution of the
+transition probabilities, is the Dirichlet distribution, which is the conjugate prior distribution of
+the categorical distribution. Typically, a symmetric Dirichlet distribution is chosen, reflecting
+ignorance about which states are inherently more likely than others. The single parameter of this
+distribution (termed the concentration parameter) controls the relative density or sparseness of
+the resulting transition matrix. A choice of 1 yields a uniform distribution. Values greater than 1
+produce a dense matrix, in which the transition probabilities between pairs of states are likely to be
+nearly equal. Values less than 1 result in a sparse matrix in which, for each given source state, only
+a small number of destination states have non-negligible transition probabilities. It is also possible
+History
+Extensions
+General state spaces
+Bayesian modeling of the transitions probabilities
+
+to use a two-level prior Dirichlet distribution, in which one Dirichlet distribution (the upper
+distribution) governs the parameters of another Dirichlet distribution (the lower distribution),
+which in turn governs the transition probabilities. The upper distribution governs the overall
+distribution of states, determining how likely each state is to occur; its concentration parameter
+determines the density or sparseness of states. Such a two-level prior distribution, where both
+concentration parameters are set to produce sparse distributions, might be useful for example in
+unsupervised part-of-speech tagging, where some parts of speech occur much more commonly
+than others; learning algorithms that assume a uniform prior distribution generally perform poorly
+on this task. The parameters of models of this sort, with non-uniform prior distributions, can be
+learned using Gibbs sampling or extended versions of the expectation-maximization algorithm.
+An extension of the previously described hidden Markov models with Dirichlet priors uses a
+Dirichlet process in place of a Dirichlet distribution. This type of model allows for an unknown and
+potentially infinite number of states. It is common to use a two-level Dirichlet process, similar to
+the previously described model with two levels of Dirichlet distributions. Such a model is called a
+hierarchical Dirichlet process hidden Markov model, or HDP-HMM for short. It was originally
+described under the name "Infinite Hidden Markov Model"[43] and was further formalized in
+"Hierarchical Dirichlet Processes".[44]
+A different type of extension uses a discriminative model in place of the generative model of
+standard HMMs. This type of model directly models the conditional distribution of the hidden
+states given the observations, rather than modeling the joint distribution. An example of this
+model is the so-called maximum entropy Markov model (MEMM), which models the conditional
+distribution of the states using logistic regression (also known as a "maximum entropy model").
+The advantage of this type of model is that arbitrary features (i.e. functions) of the observations
+can be modeled, allowing domain-specific knowledge of the problem at hand to be injected into the
+model. Models of this sort are not limited to modeling direct dependencies between a hidden state
+and its associated observation; rather, features of nearby observations, of combinations of the
+associated observation and nearby observations, or in fact of arbitrary observations at any distance
+from a given hidden state can be included in the process used to determine the value of a hidden
+state. Furthermore, there is no need for these features to be statistically independent of each other,
+as would be the case if such features were used in a generative model. Finally, arbitrary features
+over pairs of adjacent hidden states can be used rather than simple transition probabilities. The
+disadvantages of such models are: (1) The types of prior distributions that can be placed on hidden
+states are severely limited; (2) It is not possible to predict the probability of seeing an arbitrary
+observation. This second limitation is often not an issue in practice, since many common usages of
+HMM's do not require such predictive probabilities.
+A variant of the previously described discriminative model is the linear-chain conditional random
+field. This uses an undirected graphical model (aka Markov random field) rather than the directed
+graphical models of MEMM's and similar models. The advantage of this type of model is that it
+does not suffer from the so-called label bias problem of MEMM's, and thus may make more
+accurate predictions. The disadvantage is that training can be slower than for MEMM's.
+Discriminative approach
+
+Yet another variant is the factorial hidden Markov model, which allows for a single observation to
+be conditioned on the corresponding hidden variables of a set of  independent Markov chains,
+rather than a single Markov chain. It is equivalent to a single HMM, with  states (assuming
+there are  states for each chain), and therefore, learning in such a model is difficult: for a
+sequence of length , a straightforward Viterbi algorithm has complexity . To find an
+exact solution, a junction tree algorithm could be used, but it results in an 
+complexity. In practice, approximate techniques, such as variational approaches, could be used.[45]
+All of the above models can be extended to allow for more distant dependencies among hidden
+states, e.g. allowing for a given state to be dependent on the previous two or three states rather
+than a single previous state; i.e. the transition probabilities are extended to encompass sets of three
+or four adjacent states (or in general  adjacent states). The disadvantage of such models is that
+dynamic-programming algorithms for training them have an  running time, for 
+adjacent states and  total observations (i.e. a length- Markov chain). This extension has been
+widely used in bioinformatics, in the modeling of DNA sequences.
+Another recent extension is the triplet Markov model,[46] in which an auxiliary underlying process
+is added to model some data specificities. Many variants of this model have been proposed. One
+should also mention the interesting link that has been established between the theory of evidence
+and the triplet Markov models[47] and which allows to fuse data in Markovian context[48] and to
+model nonstationary data.[49][50] Alternative multi-stream data fusion strategies have also been
+proposed in recent literature, e.g.,[51]
+Finally, a different rationale towards addressing the problem of modeling nonstationary data by
+means of hidden Markov models was suggested in 2012.[52] It consists in employing a small
+recurrent neural network (RNN), specifically a reservoir network,[53] to capture the evolution of
+the temporal dynamics in the observed data. This information, encoded in the form of a high-
+dimensional vector, is used as a conditioning variable of the HMM state transition probabilities.
+Under such a setup, eventually is obtained a nonstationary HMM, the transition probabilities of
+which evolve over time in a manner that is inferred from the data, in contrast to some unrealistic
+ad-hoc model of temporal evolution.
+In 2023, two innovative algorithms were introduced for the Hidden Markov Model. These
+algorithms enable the computation of the posterior distribution of the HMM without the necessity
+of explicitly modeling the joint distribution, utilizing only the conditional distributions.[54][55]
+Unlike traditional methods such as the Forward-Backward and Viterbi algorithms, which require
+knowledge of the joint law of the HMM and can be computationally intensive to learn, the
+Discriminative Forward-Backward and Discriminative Viterbi algorithms circumvent the need for
+the observation's law.[56][57] This breakthrough allows the HMM to be applied as a discriminative
+model, offering a more efficient and versatile approach to leveraging Hidden Markov Models in
+various applications.
+The model suitable in the context of longitudinal data is named latent Markov model.[58] The basic
+version of this model has been extended to include individual covariates, random effects and to
+model more complex data structures such as multilevel data. A complete overview of the latent
+Markov models, with special attention to the model assumptions and to their practical use is
+provided in[59]
+Other extensions
+
+The hidden part of a
+hidden Markov model,
+whose observable
+states is non-Markovian
+Given a Markov transition matrix and an invariant distribution on the
+states, a probability measure can be imposed on the set of subshifts. For
+example, consider the Markov chain given on the right on the states
+, with invariant distribution . By ignoring
+the distinction between , this space of subshifts is projected on
+ into another space of subshifts on , and this projection
+also projects the probability measure down to a probability measure on
+the subshifts on .
+The curious thing is that the probability measure on the subshifts on
+ is not created by a Markov chain on , not even multiple orders.
+Intuitively, this is because if one observes a long sequence of , then
+one would become increasingly sure that the , meaning
+that the observable part of the system can be affected by something
+infinitely in the past.[60][61]
+Conversely, there exists a space of subshifts on 6 symbols, projected to subshifts on 2 symbols,
+such that any Markov measure on the smaller subshift has a preimage measure that is not Markov
+of any order (example 2.6[61]).
+Andrey Markov
+Baum–Welch algorithm
+Bayesian inference
+Bayesian programming
+Richard James Boys
+Conditional random field
+Estimation theory
+HH-suite (HHpred, HHsearch) free server and software for protein sequence searching
+HMMER, a free hidden Markov model program for protein sequence analysis
+Hidden Bernoulli model
+Hidden semi-Markov model
+Hierarchical hidden Markov model
+Layered hidden Markov model
+Sequential dynamical system
+Stochastic context-free grammar
+Time series analysis
+Variable-order Markov model
+Viterbi algorithm
+Measure theory
+See also
+References
+
+1. "Google Scholar" (https://scholar.google.com/scholar?q=levinson+hidden+markov+model+tutor
+ial&hl=en&as_sdt=0&as_vis=1&oi=scholart).
+2. Thad Starner, Alex Pentland. Real-Time American Sign Language Visual Recognition From
+Video Using Hidden Markov Models (http://www.cc.gatech.edu/~thad/p/031_10_SL/real-time-a
+sl-recognition-from%20video-using-hmm-ISCV95.pdf). Master's Thesis, MIT, Feb 1995,
+Program in Media Arts
+3. Pardo, B.; Birmingham, W. (July 2005). Modeling Form for On-line Following of Musical
+Performances (https://web.archive.org/web/20120206123155/http://www.cs.northwestern.edu/
+~pardo/publications/pardo-birmingham-aaai-05.pdf) (PDF). AAAI-05 Proc. Archived from the
+original (http://www.cs.northwestern.edu/~pardo/publications/pardo-birmingham-aaai-05.pdf)
+(PDF) on 2012-02-06.
+4. Satish L, Gururaj BI (April 2003). "Use of hidden Markov models for partial discharge pattern
+classification (https://ieeexplore.ieee.org/document/212242/;jsessionid=F905BAE29AD4A7BD
+5B228B4734549DA2?arnumber=212242)". IEEE Transactions on Dielectrics and Electrical
+Insulation.
+5. Li, N; Stephens, M (December 2003). "Modeling linkage disequilibrium and identifying
+recombination hotspots using single-nucleotide polymorphism data" (https://www.ncbi.nlm.nih.g
+ov/pmc/articles/PMC1462870). Genetics. 165 (4): 2213–33. doi:10.1093/genetics/165.4.2213
+(https://doi.org/10.1093%2Fgenetics%2F165.4.2213). PMC 1462870 (https://www.ncbi.nlm.nih.
+gov/pmc/articles/PMC1462870). PMID 14704198 (https://pubmed.ncbi.nlm.nih.gov/14704198).
+6. Ernst, Jason; Kellis, Manolis (March 2012). "ChromHMM: automating chromatin-state
+discovery and characterization" (https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3577932).
+Nature Methods. 9 (3): 215–216. Bibcode:2012NaMet...9..215E (https://ui.adsabs.harvard.edu/
+abs/2012NaMet...9..215E). doi:10.1038/nmeth.1906 (https://doi.org/10.1038%2Fnmeth.1906).
+PMC 3577932 (https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3577932). PMID 22373907 (http
+s://pubmed.ncbi.nlm.nih.gov/22373907).
+7. Lawrence R. Rabiner (February 1989). "A tutorial on Hidden Markov Models and selected
+applications in speech recognition" (http://www.ece.ucsb.edu/Faculty/Rabiner/ece259/Reprints/
+tutorial%20on%20hmm%20and%20applications.pdf) (PDF). Proceedings of the IEEE. 77 (2):
+257–286. Bibcode:1989IEEEP..77..257R (https://ui.adsabs.harvard.edu/abs/1989IEEEP..77..25
+7R). doi:10.1109/5.18626 (https://doi.org/10.1109%2F5.18626). S2CID 13618539 (https://api.s
+emanticscholar.org/CorpusID:13618539). [1]
+8. Newberg, Lee A. (2009). "Error statistics of hidden Markov model and hidden Boltzmann model
+results" (https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2722652). BMC Bioinformatics. 10
+212. doi:10.1186/1471-2105-10-212 (https://doi.org/10.1186%2F1471-2105-10-212).
+PMC 2722652 (https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2722652). PMID 19589158 (http
+s://pubmed.ncbi.nlm.nih.gov/19589158). 
+9. Sipos, I. Róbert. Parallel stratified MCMC sampling of AR-HMMs for stochastic time series
+prediction. In: Proceedings, 4th Stochastic Modeling Techniques and Data Analysis
+International Conference with Demographics Workshop (SMTDA2016), pp. 295-306. Valletta,
+2016. PDF (http://1drv.ms/b/s!ApL_0Av0YGDLglwEOv1aYAGbmQeL)
+10. Chatzis, Sotirios P.; Kosmopoulos, Dimitrios I. (2011). "A variational Bayesian methodology for
+hidden Markov models utilizing Student's-t mixtures" (https://web.archive.org/web/2011040118
+4517/http://users.iit.demokritos.gr/~dkosmo/downloads/patrec10/vbb10.pdf) (PDF). Pattern
+Recognition. 44 (2): 295–306. Bibcode:2011PatRe..44..295C (https://ui.adsabs.harvard.edu/ab
+s/2011PatRe..44..295C). doi:10.1016/j.patcog.2010.09.001 (https://doi.org/10.1016%2Fj.patco
+g.2010.09.001). Archived from the original (http://users.iit.demokritos.gr/~dkosmo/downloads/p
+atrec10/vbb10.pdf) (PDF) on 2011-04-01. Retrieved 2018-03-11.
+11. Sipos, I. Róbert; Ceffer, Attila; Levendovszky, János (2016). "Parallel Optimization of Sparse
+Portfolios with AR-HMMs". Computational Economics. 49 (4): 563–578. doi:10.1007/s10614-
+016-9579-y (https://doi.org/10.1007%2Fs10614-016-9579-y). S2CID 61882456 (https://api.sem
+anticscholar.org/CorpusID:61882456).
+
+12. Petropoulos, Anastasios; Chatzis, Sotirios P.; Xanthopoulos, Stylianos (2016). "A novel
+corporate credit rating system based on Student's-t hidden Markov models". Expert Systems
+with Applications. 53: 87–105. doi:10.1016/j.eswa.2016.01.015 (https://doi.org/10.1016%2Fj.es
+wa.2016.01.015).
+13. Nicolai, Christopher (2013). "Solving Ion Channel Kinetics with the QuB Software". Biophysical
+Reviews and Letters. 8 (3n04): 191–211. doi:10.1142/S1793048013300053 (https://doi.org/10.
+1142%2FS1793048013300053).
+14. Higgins, Cameron; Vidaurre, Diego; Kolling, Nils; Liu, Yunzhe; Behrens, Tim; Woolrich, Mark
+(2022). "Spatiotemporally Resolved Multivariate Pattern Analysis for M/EEG" (https://www.ncbi.
+nlm.nih.gov/pmc/articles/PMC9188977). Human Brain Mapping. 43 (10): 3062–3085.
+doi:10.1002/hbm.25835 (https://doi.org/10.1002%2Fhbm.25835). PMC 9188977 (https://www.n
+cbi.nlm.nih.gov/pmc/articles/PMC9188977). PMID 35302683 (https://pubmed.ncbi.nlm.nih.gov/
+35302683).
+15. Diomedi, S.; Vaccari, F. E.; Galletti, C.; Hadjidimitrakis, K.; Fattori, P. (2021-10-01). "Motor-like
+neural dynamics in two parietal areas during arm reaching" (https://www.sciencedirect.com/sci
+ence/article/pii/S0301008221001301). Progress in Neurobiology. 205 102116.
+doi:10.1016/j.pneurobio.2021.102116 (https://doi.org/10.1016%2Fj.pneurobio.2021.102116).
+hdl:11585/834094 (https://hdl.handle.net/11585%2F834094). ISSN 0301-0082 (https://search.
+worldcat.org/issn/0301-0082). PMID 34217822 (https://pubmed.ncbi.nlm.nih.gov/34217822).
+S2CID 235703641 (https://api.semanticscholar.org/CorpusID:235703641).
+16. Domingos, Pedro (2015). The Master Algorithm: How the Quest for the Ultimate Learning
+Machine Will Remake Our World (https://archive.org/details/masteralgorithmh0000domi). Basic
+Books. p. 37 (https://archive.org/details/masteralgorithmh0000domi/page/37). ISBN 978-0-465-
+06192-1.
+17. Kundu, Amlan, Yang He, and Paramvir Bahl. "Recognition of handwritten word: first and
+second order hidden Markov model based approach (https://www.academia.edu/download/485
+89949/0031-3203_2889_2990076-920160905-24541-r9o2lm.pdf)." Pattern recognition 22.3
+(1989): 283-297.
+18. Stigler, J.; Ziegler, F.; Gieseke, A.; Gebhardt, J. C. M.; Rief, M. (2011). "The Complex Folding
+Network of Single Calmodulin Molecules" (https://archive.org/details/sim_science_2011-10-28_
+334_6055/page/512). Science. 334 (6055): 512–516. Bibcode:2011Sci...334..512S (https://ui.a
+dsabs.harvard.edu/abs/2011Sci...334..512S). doi:10.1126/science.1207598 (https://doi.org/10.
+1126%2Fscience.1207598). PMID 22034433 (https://pubmed.ncbi.nlm.nih.gov/22034433).
+S2CID 5502662 (https://api.semanticscholar.org/CorpusID:5502662).
+19. Blasiak, S.; Rangwala, H. (2011). "A Hidden Markov Model Variant for Sequence
+Classification". IJCAI Proceedings-International Joint Conference on Artificial Intelligence. 22:
+1192.
+20. Wong, W.; Stamp, M. (2006). "Hunting for metamorphic engines". Journal in Computer
+Virology. 2 (3): 211–229. doi:10.1007/s11416-006-0028-7 (https://doi.org/10.1007%2Fs11416-0
+06-0028-7). S2CID 8116065 (https://api.semanticscholar.org/CorpusID:8116065).
+21. Wong, K. -C.; Chan, T. -M.; Peng, C.; Li, Y.; Zhang, Z. (2013). "DNA motif elucidation using
+belief propagation" (https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3763557). Nucleic Acids
+Research. 41 (16): e153. doi:10.1093/nar/gkt574 (https://doi.org/10.1093%2Fnar%2Fgkt574).
+PMC 3763557 (https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3763557). PMID 23814189 (http
+s://pubmed.ncbi.nlm.nih.gov/23814189).
+22. Shah, Shalin; Dubey, Abhishek K.; Reif, John (2019-05-17). "Improved Optical Multiplexing with
+Temporal DNA Barcodes". ACS Synthetic Biology. 8 (5): 1100–1111.
+doi:10.1021/acssynbio.9b00010 (https://doi.org/10.1021%2Facssynbio.9b00010).
+PMID 30951289 (https://pubmed.ncbi.nlm.nih.gov/30951289). S2CID 96448257 (https://api.se
+manticscholar.org/CorpusID:96448257).
+
+23. Shah, Shalin; Dubey, Abhishek K.; Reif, John (2019-04-10). "Programming Temporal DNA
+Barcodes for Single-Molecule Fingerprinting". Nano Letters. 19 (4): 2668–2673.
+Bibcode:2019NanoL..19.2668S (https://ui.adsabs.harvard.edu/abs/2019NanoL..19.2668S).
+doi:10.1021/acs.nanolett.9b00590 (https://doi.org/10.1021%2Facs.nanolett.9b00590).
+ISSN 1530-6984 (https://search.worldcat.org/issn/1530-6984). PMID 30896178 (https://pubme
+d.ncbi.nlm.nih.gov/30896178). S2CID 84841635 (https://api.semanticscholar.org/CorpusID:848
+41635).
+24. "ChromHMM: Chromatin state discovery and characterization" (http://compbio.mit.edu/ChromH
+MM/). compbio.mit.edu. Retrieved 2018-08-01.
+25. El Zarwi, Feraz (May 2011). "Modeling and Forecasting the Evolution of Preferences over
+Time: A Hidden Markov Model of Travel Behavior". arXiv:1707.09133 (https://arxiv.org/abs/170
+7.09133) [stat.AP (https://arxiv.org/archive/stat.AP)].
+26. Morf, H. (Feb 1998). "The stochastic two-state solar irradiance model (STSIM)". Solar Energy.
+62 (2): 101–112. Bibcode:1998SoEn...62..101M (https://ui.adsabs.harvard.edu/abs/1998SoE
+n...62..101M). doi:10.1016/S0038-092X(98)00004-8 (https://doi.org/10.1016%2FS0038-092X%
+2898%2900004-8).
+27. Munkhammar, J.; Widén, J. (Aug 2018). "A Markov-chain probability distribution mixture
+approach to the clear-sky index". Solar Energy. 170: 174–183. Bibcode:2018SoEn..170..174M
+(https://ui.adsabs.harvard.edu/abs/2018SoEn..170..174M). doi:10.1016/j.solener.2018.05.055
+(https://doi.org/10.1016%2Fj.solener.2018.05.055). S2CID 125867684 (https://api.semanticsch
+olar.org/CorpusID:125867684).
+28. Munkhammar, J.; Widén, J. (Oct 2018). "An N-state Markov-chain mixture distribution model of
+the clear-sky index". Solar Energy. 173: 487–495. Bibcode:2018SoEn..173..487M (https://ui.ad
+sabs.harvard.edu/abs/2018SoEn..173..487M). doi:10.1016/j.solener.2018.07.056 (https://doi.or
+g/10.1016%2Fj.solener.2018.07.056). S2CID 125538244 (https://api.semanticscholar.org/Corp
+usID:125538244).
+29. Baum, L. E.; Petrie, T. (1966). "Statistical Inference for Probabilistic Functions of Finite State
+Markov Chains" (https://doi.org/10.1214%2Faoms%2F1177699147). The Annals of
+Mathematical Statistics. 37 (6): 1554–1563. doi:10.1214/aoms/1177699147 (https://doi.org/10.
+1214%2Faoms%2F1177699147).
+30. Baum, L. E.; Eagon, J. A. (1967). "An inequality with applications to statistical estimation for
+probabilistic functions of Markov processes and to a model for ecology" (http://projecteuclid.or
+g/euclid.bams/1183528841). Bulletin of the American Mathematical Society. 73 (3): 360.
+Bibcode:1967BAMaS..73..360B (https://ui.adsabs.harvard.edu/abs/1967BAMaS..73..360B).
+doi:10.1090/S0002-9904-1967-11751-8 (https://doi.org/10.1090%2FS0002-9904-1967-11751-
+8). Zbl 0157.11101 (https://zbmath.org/?format=complete&q=an:0157.11101).
+31. Baum, L. E.; Sell, G. R. (1968). "Growth transformations for functions on manifolds" (https://doi.
+org/10.2140%2Fpjm.1968.27.211). Pacific Journal of Mathematics. 27 (2): 211–227.
+doi:10.2140/pjm.1968.27.211 (https://doi.org/10.2140%2Fpjm.1968.27.211).
+32. Baum, L. E.; Petrie, T.; Soules, G.; Weiss, N. (1970). "A Maximization Technique Occurring in
+the Statistical Analysis of Probabilistic Functions of Markov Chains" (https://doi.org/10.1214%2
+Faoms%2F1177697196). The Annals of Mathematical Statistics. 41 (1): 164–171.
+doi:10.1214/aoms/1177697196 (https://doi.org/10.1214%2Faoms%2F1177697196).
+JSTOR 2239727 (https://www.jstor.org/stable/2239727). MR 0287613 (https://mathscinet.ams.
+org/mathscinet-getitem?mr=0287613). Zbl 0188.49603 (https://zbmath.org/?format=complete&
+q=an:0188.49603).
+33. Baum, L.E. (1972). "An Inequality and Associated Maximization Technique in Statistical
+Estimation of Probabilistic Functions of a Markov Process". Inequalities. 3: 1–8.
+34. Baker, J. (1975). "The DRAGON system—An overview". IEEE Transactions on Acoustics,
+Speech, and Signal Processing. 23 (1): 24–29. Bibcode:1975ITASS..23...24B (https://ui.adsab
+s.harvard.edu/abs/1975ITASS..23...24B). doi:10.1109/TASSP.1975.1162650 (https://doi.org/10.
+1109%2FTASSP.1975.1162650).
+
+35. Jelinek, F.; Bahl, L.; Mercer, R. (1975). "Design of a linguistic statistical decoder for the
+recognition of continuous speech". IEEE Transactions on Information Theory. 21 (3): 250.
+Bibcode:1975ITIT...21..250J (https://ui.adsabs.harvard.edu/abs/1975ITIT...21..250J).
+doi:10.1109/TIT.1975.1055384 (https://doi.org/10.1109%2FTIT.1975.1055384).
+36. Xuedong Huang; M. Jack; Y. Ariki (1990). Hidden Markov Models for Speech Recognition (http
+s://archive.org/details/hiddenmarkovmode0000huan). Edinburgh University Press. ISBN 978-0-
+7486-0162-2.
+37. Xuedong Huang; Alex Acero; Hsiao-Wuen Hon (2001). Spoken Language Processing (https://a
+rchive.org/details/spokenlanguagepr0000huan). Prentice Hall. ISBN 978-0-13-022616-7.
+38. Carrasco, Rafael C.; Oncina, Jose (1994). "Learning stochastic regular grammars by means of
+a state merging method" (https://link.springer.com/chapter/10.1007/3-540-58473-0_144). In
+Carrasco, Rafael C.; Oncina, Jose (eds.). Grammatical Inference and Applications. Lecture
+Notes in Computer Science. Vol. 862. Berlin, Heidelberg: Springer. pp. 139–152.
+doi:10.1007/3-540-58473-0_144 (https://doi.org/10.1007%2F3-540-58473-0_144). ISBN 978-3-
+540-48985-6.
+39. M. Bishop and E. Thompson (1986). "Maximum Likelihood Alignment of DNA Sequences" (http
+s://archive.org/details/journal-of-molecular-biology_1986-07-20_190_2/page/159). Journal of
+Molecular Biology. 190 (2): 159–165. Bibcode:1986JMBio.190..159B (https://ui.adsabs.harvar
+d.edu/abs/1986JMBio.190..159B). doi:10.1016/0022-2836(86)90289-5 (https://doi.org/10.101
+6%2F0022-2836%2886%2990289-5). PMID 3641921 (https://pubmed.ncbi.nlm.nih.gov/364192
+1). (subscription required) 
+40. Durbin, Richard M.; Eddy, Sean R.; Krogh, Anders; Mitchison, Graeme (1998), Biological
+Sequence Analysis: Probabilistic Models of Proteins and Nucleic Acids (http://www.cambridge.
+org/gb/knowledge/isbn/item1158701) (1st ed.), Cambridge, New York: Cambridge University
+Press, ISBN 0-521-62971-3, OCLC 593254083 (https://search.worldcat.org/oclc/593254083)
+41. Gassiat, E.; Cleynen, A.; Robin, S. (2016-01-01). "Inference in finite state space non
+parametric Hidden Markov Models and applications". Statistics and Computing. 26 (1): 61–71.
+doi:10.1007/s11222-014-9523-8 (https://doi.org/10.1007%2Fs11222-014-9523-8). ISSN 1573-
+1375 (https://search.worldcat.org/issn/1573-1375).
+42. Abraham, Kweku; Gassiat, Elisabeth; Naulet, Zacharie (March 2023). "Fundamental Limits for
+Learning Hidden Markov Model Parameters". IEEE Transactions on Information Theory. 69 (3):
+1777–1794. arXiv:2106.12936 (https://arxiv.org/abs/2106.12936). Bibcode:2023ITIT...69.1777A
+(https://ui.adsabs.harvard.edu/abs/2023ITIT...69.1777A). doi:10.1109/TIT.2022.3213429 (http
+s://doi.org/10.1109%2FTIT.2022.3213429). ISSN 0018-9448 (https://search.worldcat.org/issn/0
+018-9448).
+43. Beal, Matthew J., Zoubin Ghahramani, and Carl Edward Rasmussen. "The infinite hidden
+Markov model." Advances in neural information processing systems 14 (2002): 577-584.
+44. Teh, Yee Whye, et al. "Hierarchical dirichlet processes." Journal of the American Statistical
+Association 101.476 (2006).
+45. Ghahramani, Zoubin; Jordan, Michael I. (1997). "Factorial Hidden Markov Models" (https://doi.
+org/10.1023%2FA%3A1007425814087). Machine Learning. 29 (2/3): 245–273.
+Bibcode:1997MLear..29..245G (https://ui.adsabs.harvard.edu/abs/1997MLear..29..245G).
+doi:10.1023/A:1007425814087 (https://doi.org/10.1023%2FA%3A1007425814087).
+46. Pieczynski, Wojciech (2002). "Chaı̂nes de Markov Triplet" (http://www.numdam.org/item/10.101
+6/S1631-073X(02)02462-7.pdf) (PDF). Comptes Rendus Mathématique. 335 (3): 275–278.
+doi:10.1016/S1631-073X(02)02462-7 (https://doi.org/10.1016%2FS1631-073X%2802%290246
+2-7).
+47. Pieczynski, Wojciech (2007). "Multisensor triplet Markov chains and theory of evidence" (http
+s://doi.org/10.1016%2Fj.ijar.2006.05.001). International Journal of Approximate Reasoning. 45:
+1–16. doi:10.1016/j.ijar.2006.05.001 (https://doi.org/10.1016%2Fj.ijar.2006.05.001).
+
+48. Boudaren, M. Y.; Monfrini, E.; Pieczynski, W.; Aissani, A. (2012). "Dempster-Shafer fusion of
+multisensor signals in nonstationary Markovian context" (https://web.archive.org/web/20140311
+164443/http://asp.eurasipjournals.com/content/pdf/1687-6180-2012-134.pdf) (PDF). EURASIP
+Journal on Advances in Signal Processing (134) 134. Bibcode:2012EJASP2012..134B (https://
+ui.adsabs.harvard.edu/abs/2012EJASP2012..134B). doi:10.1186/1687-6180-2012-134 (https://
+doi.org/10.1186%2F1687-6180-2012-134). Archived from the original (http://asp.eurasipjournal
+s.com/content/pdf/1687-6180-2012-134.pdf) (PDF) on 2014-03-11.
+49. Lanchantin et al. (https://ieeexplore.ieee.org/xpl/articleDetails.jsp?tp=&arnumber=1468502&co
+ntentType=Journals+%26+Magazines&searchField%3DSearch_All%26queryText%3Dlanchant
+in+pieczynski), P. Lanchantin and W. Pieczynski, Unsupervised restoration of hidden non
+stationary Markov chain using evidential priors, IEEE Transactions on Signal Processing, Vol.
+53, No. 8, pp. 3091-3098, 2005.
+50. Boudaren, M. Y.; Monfrini, E.; Pieczynski, W. (October 2012). "Unsupervised segmentation of
+random discrete data hidden with switching noise distributions". IEEE Signal Processing
+Letters. 19 (10): 619–622. Bibcode:2012ISPL...19..619B (https://ui.adsabs.harvard.edu/abs/20
+12ISPL...19..619B). doi:10.1109/LSP.2012.2209639 (https://doi.org/10.1109%2FLSP.2012.220
+9639).
+51. Sotirios P. Chatzis, Dimitrios Kosmopoulos, "Visual Workflow Recognition Using a Variational
+Bayesian Treatment of Multistream Fused Hidden Markov Models," (https://ieeexplore.ieee.org/
+document/6164251/) IEEE Transactions on Circuits and Systems for Video Technology, vol. 22,
+no. 7, pp. 1076-1086, July 2012.
+52. Chatzis, Sotirios P.; Demiris, Yiannis (2012). "A Reservoir-Driven Non-Stationary Hidden
+Markov Model". Pattern Recognition. 45 (11): 3985–3996. Bibcode:2012PatRe..45.3985C (http
+s://ui.adsabs.harvard.edu/abs/2012PatRe..45.3985C). doi:10.1016/j.patcog.2012.04.018 (http
+s://doi.org/10.1016%2Fj.patcog.2012.04.018). hdl:10044/1/12611 (https://hdl.handle.net/1004
+4%2F1%2F12611).
+53. M. Lukosevicius, H. Jaeger (2009) Reservoir computing approaches to recurrent neural
+network training, Computer Science Review 3: 127–149.
+54. Azeraf, E., Monfrini, E., & Pieczynski, W. (2023). Equivalence between LC-CRF and HMM, and
+Discriminative Computing of HMM-Based MPM and MAP. Algorithms, 16(3), 173.
+55. Azeraf, E., Monfrini, E., Vignon, E., & Pieczynski, W. (2020). Hidden markov chains, entropic
+forward-backward, and part-of-speech tagging. arXiv preprint arXiv:2005.10629.
+56. Azeraf, E., Monfrini, E., & Pieczynski, W. (2022). Deriving discriminative classifiers from
+generative models. arXiv preprint arXiv:2201.00844.
+57. Ng, A., & Jordan, M. (2001). On discriminative vs. generative classifiers: A comparison of
+logistic regression and naive bayes. Advances in neural information processing systems, 14.
+58. Wiggins, L. M. (1973). Panel Analysis: Latent Probability Models for Attitude and Behaviour
+Processes. Amsterdam: Elsevier.
+59. Bartolucci, F.; Farcomeni, A.; Pennoni, F. (2013). Latent Markov models for longitudinal data (ht
+tps://sites.google.com/site/latentmarkovbook/home). Boca Raton: Chapman and Hall/CRC.
+ISBN 978-14-3981-708-7.
+60. Sofic Measures: Characterizations of Hidden Markov Chains by Linear Algebra, Formal
+Languages, and Symbolic Dynamics (https://web.archive.org/web/20221005013617/https://pet
+ersen.web.unc.edu/wp-content/uploads/sites/17054/2018/04/Main.pdf) - Karl Petersen,
+Mathematics 210, Spring 2006, University of North Carolina at Chapel Hill
+61. Boyle, Mike; Petersen, Karl (2010-01-13), Hidden Markov processes in the context of symbolic
+dynamics, arXiv:0907.1858 (https://arxiv.org/abs/0907.1858)
+External links
+
+Teif, V. B.; Rippe, K. (2010). "Statistical–mechanical lattice models for protein–DNA binding in
+chromatin". J. Phys.: Condens. Matter. 22 (41) 414105. arXiv:1004.5514 (https://arxiv.org/abs/1
+004.5514). Bibcode:2010JPCM...22O4105T (https://ui.adsabs.harvard.edu/abs/2010JPCM...22
+O4105T). doi:10.1088/0953-8984/22/41/414105 (https://doi.org/10.1088%2F0953-8984%2F2
+2%2F41%2F414105). PMID 21386588 (https://pubmed.ncbi.nlm.nih.gov/21386588).
+S2CID 103345 (https://api.semanticscholar.org/CorpusID:103345).
+A Revealing Introduction to Hidden Markov Models (http://www.cs.sjsu.edu/~stamp/RUA/HMM.
+pdf) by Mark Stamp, San Jose State University.
+Fitting HMM's with expectation-maximization – complete derivation (https://web.archive.org/we
+b/20120415032315/http://www.ee.washington.edu/research/guptalab/publications/EMbookChe
+nGupta2010.pdf)
+A step-by-step tutorial on HMMs (http://www.comp.leeds.ac.uk/roger/HiddenMarkovModels/htm
+l_dev/main.html) Archived (https://web.archive.org/web/20170813231824/http://www.comp.leed
+s.ac.uk/roger/HiddenMarkovModels/html_dev/main.html) 2017-08-13 at the Wayback Machine
+(University of Leeds)
+Hidden Markov Models (https://www.cs.brown.edu/research/ai/dynamics/tutorial/Documents/Hi
+ddenMarkovModels.html) (an exposition using basic mathematics)
+Hidden Markov Models (http://jedlik.phy.bme.hu/~gerjanos/HMM/node2.html) (by Narada
+Warakagoda)
+Hidden Markov Models: Fundamentals and Applications Part 1 (http://www.eecis.udel.edu/~llia
+o/cis841s06/hmmtutorialpart1.pdf), Part 2 (http://www.eecis.udel.edu/~lliao/cis841s06/hmmtuto
+rialpart2.pdf) (by V. Petrushin)
+Lecture on a Spreadsheet by Jason Eisner, Video (http://videolectures.net/hltss2010_eisner_pl
+m/video/2/) and interactive spreadsheet (http://www.cs.jhu.edu/~jason/papers/eisner.hmm.xls)
+Retrieved from "https://en.wikipedia.org/w/index.php?title=Hidden_Markov_model&oldid=1369030736"
+Concepts
