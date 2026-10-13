@@ -1,0 +1,13 @@
+,value
+unanswerable_answered_rag_off,15
+unanswerable_answered_rag_on,0
+declined_by_gate,12
+declined_by_model,3
+answerable_answered_rag_on,13
+answerable_hedged_rag_on,0
+answerable_refused_rag_on,2
+rag_on_identical_across_runs,28
+errors,0
+prompt_tokens_total,42171
+completion_tokens_total,9099
+hit_max_tokens,0
