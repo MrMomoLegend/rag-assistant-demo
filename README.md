@@ -5,7 +5,7 @@ A retrieval-augmented assistant over 22 openly licensed NLP documents (Wikipedia
 and declines when they don't contain the answer, either before calling the model or
 because the model judged the passages insufficient.
 
-**Live demo:** <APP_URL>
+**Live demo:** https://rag-assistant-demo.streamlit.app (if it has been idle for 12 hours, click "Yes, get this app back up!" and wait about a minute)
 
 It's the hosted version of my final-year project, a
 [local AI orchestration system](https://github.com/MrMomoLegend/ai-orchestrator/tree/e90dc2e)
