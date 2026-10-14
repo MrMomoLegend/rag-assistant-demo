@@ -1,13 +1,12 @@
 # The document corpus
 
-This folder is the assistant's knowledge base. Anything you drop in here (`.txt`, `.md`,
-`.pdf`) becomes answerable material once you run:
-
-    python ingest.py --reset
+This folder is the assistant's knowledge base: 22 plain-text files extracted from the FYP's
+PDFs (`scripts/extract_corpus.py`). The app splits and embeds them into an in-memory index at
+startup; nothing else needs to be run.
 
 ## What is in the repository
 
-22 openly licensed PDFs on natural language processing, so a fresh clone runs end to end:
+22 openly licensed documents on natural language processing:
 
 - **Wikipedia articles (13)**: CYK algorithm, GPT-4, Hallucination (artificial
   intelligence), Hidden Markov model, Large language model, Named-entity recognition,
@@ -21,8 +20,8 @@ This folder is the assistant's knowledge base. Anything you drop in here (`.txt`
 
 Both are redistributed unmodified under CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/).
 
-## Relation to the report
+## Relation to the final-year project
 
-Chapter 5's project-corpus results were measured against exactly these files, with the
+The FYP's Chapter 5 project-corpus results were measured against the PDFs these files were extracted from, with the
 questions in `eval/questions_rag.csv`. The retrieval threshold (0.53) and k (10) were fixed
 earlier on a non-redistributable course-reading corpus and were not re-tuned here.
