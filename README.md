@@ -20,7 +20,8 @@ Cloudflare Workers AI, and the React UI by Streamlit.
 2. Leave the mode on **Compare** and click **"What word error rate does OpenAI's Whisper model
    achieve on LibriSpeech?"**. On the left, the model alone invents a confident figure. On the
    right, with the documents, it declines, because the corpus doesn't say.
-3. Click **"When was GPT-4 released?"**: answered from the GPT-4 article, with the passage shown.
+3. Click **"Which researchers is the CYK algorithm named after?"**: the model alone names the wrong
+   people; with the documents it gives Cocke, Younger and Kasami, with the passage shown.
 4. Click **"What is the capital of Brazil?"**: declined in about 10 ms without calling the model,
    because no passage is close enough.
 

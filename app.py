@@ -16,8 +16,8 @@ LINKEDIN = "https://www.linkedin.com/in/mokith-maheshkumar/"
 
 # Chosen from the parity run on Tue 13: keep only questions that behave as described.
 EXAMPLES = [
-    "When was GPT-4 released?",                                                     # A13: grounded answer
-    "What normal form must a grammar be in before the CYK algorithm can be applied?",  # A02: grounded answer
+    "Which researchers is the CYK algorithm named after?",                          # A03: model alone names the wrong researchers; with documents, Cocke, Younger, Kasami
+    "How does the fastText subword model represent a word?",                        # A09: grounded answer (sum of subword vectors)
     "What two tasks is BERT pretrained on?",                                        # A08: grounded answer
     "What word error rate does OpenAI's Whisper model achieve on LibriSpeech?",     # C03: model alone invents a number; with documents it declines
     "What is the capital of Brazil?",                                               # B01: declined by the gate, no model call
