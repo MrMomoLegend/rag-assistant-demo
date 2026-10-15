@@ -5,7 +5,7 @@ A retrieval-augmented assistant over 22 openly licensed NLP documents (Wikipedia
 and declines when they don't contain the answer, either before calling the model or
 because the model judged the passages insufficient.
 
-**Live demo:** https://rag-assistant-demo.streamlit.app (if it has been idle for 12 hours, click "Yes, get this app back up!" and wait about a minute)
+**Live demo:** https://rag-assistant-demo.streamlit.app (if it has been idle for 12 hours, click "Yes, get this app back up!" and allow 3 to 4 minutes before the first answer)
 
 It's the hosted version of my final-year project, a
 [local AI orchestration system](https://github.com/MrMomoLegend/ai-orchestrator/tree/e90dc2e)
@@ -16,7 +16,8 @@ Cloudflare Workers AI, and the React UI by Streamlit.
 ## Try it in 30 seconds
 
 1. Open the demo. If it's been idle for 12 hours it sleeps: click **"Yes, get this app back up!"**
-   and give it about a minute while it rebuilds the index.
+   and allow 3 to 4 minutes: the app restarts (about 2.5 minutes), then builds the index on the first
+   question (about a minute). After that, answers take a few seconds.
 2. Leave the mode on **Compare** and click **"What word error rate does OpenAI's Whisper model
    achieve on LibriSpeech?"**. On the left, the model alone invents a confident figure. On the
    right, with the documents, it declines, because the corpus doesn't say.
@@ -74,6 +75,8 @@ documents, which is most of why they're faster.
   do not contain the formula for X") can be labelled as declined although it answered.
 - Hosted inference isn't bit-for-bit repeatable: 28 of 30 answers were identical across two
   runs with the same seed.
+- English only. The embedding model is English, so a question in another language lands far from
+  every passage and is declined (a Spanish question tested at 0.64 against the 0.53 limit).
 - Free tier: about 10,000 model "neurons" a day. If they run out, the app says so. They reset
   at 00:00 UTC.
 
