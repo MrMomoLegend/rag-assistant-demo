@@ -19,7 +19,7 @@ EXAMPLES = [
     "Which researchers is the CYK algorithm named after?",                          # A03: model alone names the wrong researchers; with documents, Cocke, Younger, Kasami
     "How does the fastText subword model represent a word?",                        # A09: grounded answer (sum of subword vectors)
     "What two tasks is BERT pretrained on?",                                        # A08: grounded answer
-    "What word error rate does OpenAI's Whisper model achieve on LibriSpeech?",     # C03: model alone invents a number; with documents it declines
+    "What word error rate does OpenAI's Whisper model achieve on LibriSpeech?",     # C03: model alone varies: sometimes a number, sometimes a refusal; with documents it declines
     "What is the capital of Brazil?",                                               # B01: declined by the gate, no model call
 ]
 

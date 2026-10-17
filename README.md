@@ -19,8 +19,9 @@ Cloudflare Workers AI, and the React UI by Streamlit.
    and allow 3 to 4 minutes: the app restarts (about 2.5 minutes), then builds the index on the first
    question (about a minute). After that, answers take a few seconds.
 2. Leave the mode on **Compare** and click **"What word error rate does OpenAI's Whisper model
-   achieve on LibriSpeech?"**. On the left, the model alone invents a confident figure. On the
-   right, with the documents, it declines, because the corpus doesn't say.
+   achieve on LibriSpeech?"**. With the documents, it declines, because the corpus doesn't give a
+   figure. The model alone varies between runs: sometimes it produces a confident number (6.8% in
+   one test), sometimes it says it can't look it up.
 3. Click **"Which researchers is the CYK algorithm named after?"**: the model alone names the wrong
    people; with the documents it gives Cocke, Younger and Kasami, with the passage shown.
 4. Click **"What is the capital of Brazil?"**: declined in about 10 ms without calling the model,
